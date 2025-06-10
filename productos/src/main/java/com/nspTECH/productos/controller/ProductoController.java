@@ -83,17 +83,17 @@ public class ProductoController {
     @PostMapping
     @Operation(summary = "ENDPOINT QUE REGISTRA UN PRODUCTO", description = "ENDPOINT QUE REGISTRA UN PRODUCTO",requestBody= @io.swagger.v3.oas.annotations.parameters.RequestBody(description="PRODUCTO QUE SE VA A REGISTRAR", required = true), content = @Content(schema = @Schema(implementation = producto.class)))
     @ApiResponses (value = {
-        @ApiResponse(responseCode = "200", description = "Se registro correctamente el producto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = producto.class))), 
+        @ApiResponse(responseCode = "200", description = "Se registro correctamente el producto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = producto.class))),
         @ApiResponse(responseCode = "500", description = "Indica que no se logro registrar el producto", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", example = "No se puede registrar el producto")))
     })
 
     public ResponseEntity<?> GuardarProducto(@RequestBody producto productoGuardar){
-       try {
+    try {
             producto productoRegistrar = productoService.GuardarProducto(productoGuardar);
             return ResponseEntity.ok(productoRegistrar);
-       } catch (Exception e) {
-         return ResponseEntity.status(HttpStatus.CONFLICT).body("No se puede registrar el Producto");
-       }
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("No se puede registrar el Producto");
+    }
     }
     
     @DeleteMapping("/{ID_PRODUCTO}")
@@ -109,7 +109,7 @@ public class ProductoController {
     @PutMapping("/{ID_PRODUCTO}") //SOLO PERMITE ACTUALIZAR ESCRIBIENDO TODOS LOS DATOS
 
     @Operation(summary = "ENDPOINT QUE EDITA UN PRODUCTO", description = "ENDPOINT QUE EDITA UN PRODUCTO", requestBody=@io.swagger.v3.oas.annotations.parameters.RequestBody(description="PRODUCTO QUE SE VA A REGISTRAR", required = true), content = @Content(schema = @Schema(implementation = producto.class)))
-     @Parameters (value = {
+    @Parameters (value = {
         @Parameter (name="ID_PRODUCTO", description= "ID del producto que se editara", in = ParameterIn.PATH, required= true)})
 
     @ApiResponses (value = {
