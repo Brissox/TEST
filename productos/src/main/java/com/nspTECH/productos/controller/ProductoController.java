@@ -18,6 +18,9 @@ import com.nspTECH.productos.model.producto;
 import com.nspTECH.productos.services.productoService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,6 +37,8 @@ public class ProductoController {
 
     private productoService productoService;
 
+
+// ENDPOINT PARA BUSCAR TODOS LOS PRODUCTOS
     @GetMapping
     @Operation(summary = "Productos", description = "Operacion que lista todos los productos")
     @ApiResponses (value = {
@@ -51,7 +56,19 @@ public class ProductoController {
             return ResponseEntity.ok(productos);
         }
     }
+
+
+    // ENDPOINT PARA BUSCAR UN PRODUCTO
     @GetMapping("/{ID_PRODUCTO}")
+     @Operation(summary = "Productos", description = "Operacion que lista un producto")
+     @Parameters (value = {
+        @Parameter (name="ID_PRODUCTO", description= "ID del producto que se buscara", in = ParameterIn.PATH, required= true)
+
+     })
+    @ApiResponses (value = {
+        @ApiResponse(responseCode = "200", description = "Se lista correctamente el producto ", content = @Content(mediaType = "application/json", schema = @Schema(implementation = producto.class))), 
+        @ApiResponse(responseCode = "404", description = "No se encontro ningun producto", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", example = "No se encuentran Datos")))
+    })
     public ResponseEntity<?> BuscarProducto(@PathVariable Long ID_PRODUCTO){
 
         try {
@@ -64,6 +81,12 @@ public class ProductoController {
     }
 
     @PostMapping
+    @Operation(summary = "ENDPOINT QUE REGISTRA UN PRODUCTO", description = "ENDPOINT QUE REGISTRA UN PRODUCTO",requestBody= @io.swagger.v3.oas.annotations.parameters.RequestBody(description="PRODUCTO QUE SE VA A REGISTRAR", required = true), content = @Content(schema = @Schema(implementation = producto.class)))
+    @ApiResponses (value = {
+        @ApiResponse(responseCode = "200", description = "Se registro correctamente el producto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = producto.class))), 
+        @ApiResponse(responseCode = "500", description = "Indica que no se logro registrar el producto", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", example = "No se puede registrar el producto")))
+    })
+
     public ResponseEntity<?> GuardarProducto(@RequestBody producto productoGuardar){
        try {
             producto productoRegistrar = productoService.GuardarProducto(productoGuardar);
@@ -84,6 +107,17 @@ public class ProductoController {
             }
         }
     @PutMapping("/{ID_PRODUCTO}") //SOLO PERMITE ACTUALIZAR ESCRIBIENDO TODOS LOS DATOS
+
+    @Operation(summary = "ENDPOINT QUE EDITA UN PRODUCTO", description = "ENDPOINT QUE EDITA UN PRODUCTO", requestBody=@io.swagger.v3.oas.annotations.parameters.RequestBody(description="PRODUCTO QUE SE VA A REGISTRAR", required = true), content = @Content(schema = @Schema(implementation = producto.class)))
+     @Parameters (value = {
+        @Parameter (name="ID_PRODUCTO", description= "ID del producto que se editara", in = ParameterIn.PATH, required= true)})
+
+    @ApiResponses (value = {
+        @ApiResponse(responseCode = "200", description = "Se edito correctamente el producto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = producto.class))), 
+        @ApiResponse(responseCode = "500", description = "Producto no esta registrado", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", example = "No se puede registrar el producto")))
+    })
+
+
         
     public ResponseEntity<?> ActualizarProducto(@PathVariable Long ID_PRODUCTO, @RequestBody producto productoActualizar){
         try {
