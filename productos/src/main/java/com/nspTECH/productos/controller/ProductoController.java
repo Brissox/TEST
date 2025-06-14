@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nspTECH.productos.Assembler.ProductModelAssembler;
 import com.nspTECH.productos.model.producto;
 import com.nspTECH.productos.services.productoService;
 
@@ -37,6 +38,9 @@ public class ProductoController {
 
     private productoService productoService;
 
+    @Autowired
+    private ProductModelAssembler assambler;
+
 
 // ENDPOINT PARA BUSCAR TODOS LOS PRODUCTOS
     @GetMapping
@@ -53,18 +57,18 @@ public class ProductoController {
         if (productos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encuentran dato");
         } else {
-            return ResponseEntity.ok(productos);
+            return ResponseEntity.ok(assambler.toCollectionModel(productos));
         }
     }
 
 
     // ENDPOINT PARA BUSCAR UN PRODUCTO
     @GetMapping("/{ID_PRODUCTO}")
-     @Operation(summary = "Productos", description = "Operacion que lista un producto")
-     @Parameters (value = {
+    @Operation(summary = "Productos", description = "Operacion que lista un producto")
+    @Parameters (value = {
         @Parameter (name="ID_PRODUCTO", description= "ID del producto que se buscara", in = ParameterIn.PATH, required= true)
 
-     })
+    })
     @ApiResponses (value = {
         @ApiResponse(responseCode = "200", description = "Se lista correctamente el producto ", content = @Content(mediaType = "application/json", schema = @Schema(implementation = producto.class))), 
         @ApiResponse(responseCode = "404", description = "No se encontro ningun producto", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", example = "No se encuentran Datos")))
@@ -73,7 +77,7 @@ public class ProductoController {
 
         try {
             producto productoBuscado = productoService.BuscarUnProducto(ID_PRODUCTO);
-            return ResponseEntity.ok(productoBuscado);
+            return ResponseEntity.ok(assambler.toModel(productoBuscado));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encuentran Producto");
         }
@@ -81,7 +85,7 @@ public class ProductoController {
     }
 
     @PostMapping
-    @Operation(summary = "ENDPOINT QUE REGISTRA UN PRODUCTO", description = "ENDPOINT QUE REGISTRA UN PRODUCTO",requestBody= @io.swagger.v3.oas.annotations.parameters.RequestBody(description="PRODUCTO QUE SE VA A REGISTRAR", required = true), content = @Content(schema = @Schema(implementation = producto.class)))
+    @Operation(summary = "ENDPOINT QUE REGISTRA UN PRODUCTO", description = "ENDPOINT QUE REGISTRA UN PRODUCTO",requestBody= @io.swagger.v3.oas.annotations.parameters.RequestBody(description="PRODUCTO QUE SE VA A REGISTRAR", required = true), Content = @Content(schema = @Schema(implementation = producto.class)))
     @ApiResponses (value = {
         @ApiResponse(responseCode = "200", description = "Se registro correctamente el producto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = producto.class))),
         @ApiResponse(responseCode = "500", description = "Indica que no se logro registrar el producto", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", example = "No se puede registrar el producto")))
@@ -108,7 +112,7 @@ public class ProductoController {
         }
     @PutMapping("/{ID_PRODUCTO}") //SOLO PERMITE ACTUALIZAR ESCRIBIENDO TODOS LOS DATOS
 
-    @Operation(summary = "ENDPOINT QUE EDITA UN PRODUCTO", description = "ENDPOINT QUE EDITA UN PRODUCTO", requestBody=@io.swagger.v3.oas.annotations.parameters.RequestBody(description="PRODUCTO QUE SE VA A REGISTRAR", required = true), content = @Content(schema = @Schema(implementation = producto.class)))
+    @Operation(summary = "ENDPOINT QUE EDITA UN PRODUCTO", description = "ENDPOINT QUE EDITA UN PRODUCTO", requestBody=@io.swagger.v3.oas.annotations.parameters.RequestBody(description="PRODUCTO QUE SE VA A REGISTRAR", required = true), Content = @Content(schema = @Schema(implementation = producto.class)))
     @Parameters (value = {
         @Parameter (name="ID_PRODUCTO", description= "ID del producto que se editara", in = ParameterIn.PATH, required= true)})
 
